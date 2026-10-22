@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}CNN-LSTM Model Training - Industrial Health System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>CNN-LSTM Model Training Pipeline</h1>
+    <p>Train 1D Convolutional Neural Network + LSTM architecture on real company machine data.</p>
+</div>
+
+<!-- Training Controls & Configuration -->
+<div class="grid-2">
+    <div class="card">
+        <div class="card-title">Training Configuration & Parameters</div>
+        
+        <form id="training-form">
+            <div class="form-group">
+                <label class="form-label">Active Dataset:</label>
+                <input type="text" id="train-ds-filename" class="form-control" value="Loading dataset..." readonly>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="form-group">
+                    <label class="form-label" for="train-target-col">Target Fault Column:</label>
+                    <select id="train-target-col" class="form-select" required>
+                        <option value="">Loading columns...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="train-machine-id-col">Machine ID Column:</label>
+                    <select id="train-machine-id-col" class="form-select">
+                        <option value="">None / Single Unit</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Selected Sensor Input Features:</label>
+                <div id="train-features-list" style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.5rem 0.75rem; border-radius: 0.375rem; font-size: 0.85rem; max-height: 90px; overflow-y: auto;">
+                    Loading features...
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.75rem;">
+                <div class="form-group">
+                    <label class="form-label" for="train-seq-len">Seq Length:</label>
+                    <input type="number" id="train-seq-len" class="form-control" value="30" min="5">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="train-epochs">Epochs:</label>
+                    <input type="number" id="train-epochs" class="form-control" value="25" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="train-batch">Batch Size:</label>
+                    <input type="number" id="train-batch" class="form-control" value="32" min="8">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="train-lr">Learning Rate:</label>
+                    <input type="number" id="train-lr" class="form-control" value="0.001" step="0.0005" min="0.0001">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btn-start-training" style="width: 100%; margin-top: 0.5rem;">
+                ⚡ Train CNN-LSTM Model
+            </button>
+        </form>
+    </div>
+
+    <!-- Terminal Status Log -->
+    <div class="card" style="display: flex; flex-direction: column;">
+        <div class="card-title">Training Execution Status</div>
+        <div id="training-status-box" style="margin-bottom: 0.75rem; font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">
+            Status: Ready to train
+        </div>
+        
+        <div id="terminal-log" style="flex: 1; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 0.375rem; padding: 0.85rem; font-family: var(--font-mono); font-size: 0.8rem; color: #34d399; height: 270px; overflow-y: auto; white-space: pre-wrap;">
+[SYSTEM READY] Click 'Train CNN-LSTM Model' to start execution.
+        </div>
+    </div>
+</div>
+
+<!-- Test Evaluation Results (Shown after training) -->
+<div id="evaluation-results-section" style="display: none; margin-top: 1.5rem;">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Held-Out Test Dataset Evaluation Metrics</h2>
+    
+    <div class="grid-4">
+        <div class="card">
+            <div class="card-title">Test Accuracy</div>
+            <div class="card-value" id="test-acc-val">--%</div>
+            <div class="card-sub">Categorical accuracy</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Precision</div>
+            <div class="card-value" id="test-prec-val">--%</div>
+            <div class="card-sub">Weighted precision</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Recall</div>
+            <div class="card-value" id="test-rec-val">--%</div>
+            <div class="card-sub">Weighted recall</div>
+        </div>
+        <div class="card">
+            <div class="card-title">F1-Score</div>
+            <div class="card-value" id="test-f1-val">--%</div>
+            <div class="card-sub">Weighted F1-score</div>
+        </div>
+    </div>
+
+    <!-- Training Loss & Accuracy Curves -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">Training vs Validation Accuracy</div>
+            <div class="chart-container">
+                <canvas id="accuracyChart"></canvas>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Training vs Validation Loss</div>
+            <div class="chart-container">
+                <canvas id="lossChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confusion Matrix Table -->
+    <div class="card">
+        <div class="card-title">Test Set Confusion Matrix</div>
+        <div class="table-responsive" style="margin-top: 0.5rem;">
+            <table class="table" id="cm-table">
+                <thead id="cm-thead"></thead>
+                <tbody id="cm-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/training.js') }}"></script>
+{% endblock %}

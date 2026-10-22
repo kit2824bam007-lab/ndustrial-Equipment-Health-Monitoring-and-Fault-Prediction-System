@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Equipment Health Monitoring & Fault Prediction{% endblock %}</title>
+    <!-- Google Fonts & Chart.js -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="icon">⚙️</span>
+            <h2>INDUSTRIAL HEALTH SYSTEM</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard_page') }}" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="{{ url_for('dataset_page') }}" class="nav-item {% if active_page == 'dataset' %}active{% endif %}">
+                <span>📁</span> Dataset
+            </a>
+            <a href="{{ url_for('training_page') }}" class="nav-item {% if active_page == 'training' %}active{% endif %}">
+                <span>🧠</span> Training
+            </a>
+            <a href="{{ url_for('prediction_page') }}" class="nav-item {% if active_page == 'prediction' %}active{% endif %}">
+                <span>⚡</span> Prediction
+            </a>
+            <a href="{{ url_for('history_page') }}" class="nav-item {% if active_page == 'history' %}active{% endif %}">
+                <span>📜</span> History
+            </a>
+            <a href="{{ url_for('reports_page') }}" class="nav-item {% if active_page == 'reports' %}active{% endif %}">
+                <span>📈</span> Reports
+            </a>
+            <a href="{{ url_for('about_page') }}" class="nav-item {% if active_page == 'about' %}active{% endif %}">
+                <span>ℹ️</span> About
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <p><strong>CNN-LSTM Predictive Maintenance</strong></p>
+            <p>v1.0.0 • Python & Keras</p>
+        </div>
+    </aside>
+
+    <!-- Main Content Layout -->
+    <div class="main-wrapper">
+        <header class="top-bar">
+            <div class="top-bar-title">Industrial Equipment Health Monitoring and Fault Prediction System</div>
+            <div class="active-dataset-pill">
+                <span class="dot"></span>
+                <span id="global-dataset-name">Dataset: sample_machine_data.csv (Demo)</span>
+            </div>
+        </header>
+
+        <main class="content-area">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Global App Script -->
+    <script>
+        // Synchronize Active Dataset Pill
+        async function updateActiveDatasetPill() {
+            try {
+                const res = await fetch('/api/inspect-current-dataset');
+                const data = await res.json();
+                if (data.success) {
+                    const pillEl = document.getElementById('global-dataset-name');
+                    const isDemoStr = data.dataset.is_demo ? ' (Demo)' : '';
+                    if (pillEl) {
+                        pillEl.textContent = `Dataset: ${data.dataset.filename}${isDemoStr}`;
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching dataset info:", e);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateActiveDatasetPill);
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

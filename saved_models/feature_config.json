@@ -1,0 +1,15 @@
+{
+  "target_column": "Fault_Status",
+  "feature_columns": [
+    "Temperature",
+    "Vibration",
+    "Current",
+    "RPM",
+    "Pressure",
+    "Load",
+    "Operating_Hours"
+  ],
+  "timestamp_column": "Timestamp",
+  "machine_id_column": "Machine_ID",
+  "sequence_length": 30
+}

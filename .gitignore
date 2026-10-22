@@ -1,0 +1,132 @@
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+*.whl
+
+# ===========================
+# Virtual Environments
+# ===========================
+venv/
+env/
+ENV/
+.venv/
+.env/
+Pipfile.lock
+
+# ===========================
+# Environment Variables
+# ===========================
+.env
+.env.local
+.env.*.local
+*.env
+
+# ===========================
+# Trained ML Model Artifacts
+# (large binary files — regenerate by running training)
+# ===========================
+saved_models/*.keras
+saved_models/*.h5
+saved_models/*.pkl
+saved_models/metrics.json
+saved_models/model_metadata.json
+
+# ===========================
+# Runtime / Generated Data
+# ===========================
+data/uploads/
+data/processed/
+# Keep sample data directory but ignore large generated files
+data/sample/*.csv
+
+# ===========================
+# SQLite Database
+# ===========================
+database/database.db
+database/*.db
+*.sqlite
+*.sqlite3
+
+# ===========================
+# IDE & Editor Files
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# Jupyter Notebooks
+# ===========================
+.ipynb_checkpoints/
+*.ipynb
+
+# ===========================
+# Testing & Coverage
+# ===========================
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.cover
+.tox/
+nosetests.xml
+
+# ===========================
+# Logs
+# ===========================
+*.log
+logs/
+flask_session/
+
+# ===========================
+# OS Generated Files
+# ===========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ===========================
+# Temporary & Cache Files
+# ===========================
+*.tmp
+*.temp
+*.bak
+*.orig
+.cache/
+tmp/
+
+# ===========================
+# Distribution / Packaging
+# ===========================
+.Python
+htmlcov/
+.eggs/
+*.manifest
+*.spec

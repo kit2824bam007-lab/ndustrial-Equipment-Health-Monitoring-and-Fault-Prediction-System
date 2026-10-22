@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}System Reports - Industrial Health System{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1>Comprehensive System Report</h1>
+        <p>Summary of dataset statistics, CNN-LSTM model evaluation metrics, and prediction analytics.</p>
+    </div>
+    <a href="/api/export-report" class="btn btn-primary">
+        📥 Export Report CSV
+    </a>
+</div>
+
+<div class="grid-2">
+    <!-- Dataset Summary Card -->
+    <div class="card">
+        <div class="card-title">Dataset Summary</div>
+        <table class="table" style="margin-top: 0.5rem;">
+            <tbody>
+                <tr><td><strong>Active Dataset File:</strong></td><td id="rep-ds-filename">--</td></tr>
+                <tr><td><strong>Dataset Source:</strong></td><td id="rep-ds-source">--</td></tr>
+                <tr><td><strong>Total Data Records:</strong></td><td id="rep-ds-rows">--</td></tr>
+                <tr><td><strong>Detected Sensor Signals:</strong></td><td id="rep-ds-sensors">--</td></tr>
+                <tr><td><strong>Sequence Windowing:</strong></td><td id="rep-ds-seq">--</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Model Evaluation Performance Card -->
+    <div class="card">
+        <div class="card-title">CNN-LSTM Model Evaluation</div>
+        <table class="table" style="margin-top: 0.5rem;">
+            <tbody>
+                <tr><td><strong>Test Set Accuracy:</strong></td><td id="rep-model-acc">--</td></tr>
+                <tr><td><strong>Weighted Precision:</strong></td><td id="rep-model-prec">--</td></tr>
+                <tr><td><strong>Weighted Recall:</strong></td><td id="rep-model-rec">--</td></tr>
+                <tr><td><strong>Weighted F1-Score:</strong></td><td id="rep-model-f1">--</td></tr>
+                <tr><td><strong>Model File Path:</strong></td><td><code style="font-family: var(--font-mono); font-size: 0.75rem;">saved_models/cnn_lstm_model.keras</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Prediction Analytics Breakdown -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-title">Health Status Breakdown</div>
+    <div class="grid-4" style="margin-top: 1rem; margin-bottom: 0;">
+        <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">TOTAL PREDICTIONS</div>
+            <div style="font-size: 1.5rem; font-weight: 700;" id="rep-total-preds">0</div>
+        </div>
+        <div style="background: var(--status-normal-bg); border: 1px solid var(--status-normal); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+            <div style="font-size: 0.8rem; color: var(--status-normal);">NORMAL COUNT</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--status-normal);" id="rep-normal-preds">0</div>
+        </div>
+        <div style="background: var(--status-warning-bg); border: 1px solid var(--status-warning); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+            <div style="font-size: 0.8rem; color: var(--status-warning);">WARNING COUNT</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--status-warning);" id="rep-warning-preds">0</div>
+        </div>
+        <div style="background: var(--status-critical-bg); border: 1px solid var(--status-critical); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+            <div style="font-size: 0.8rem; color: var(--status-critical);">CRITICAL COUNT</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--status-critical);" id="rep-critical-preds">0</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}

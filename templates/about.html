@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}About System Architecture - Industrial Health System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>System Architecture & Methodology</h1>
+    <p>Software-only predictive maintenance system powered by 1D Convolutional and Long Short-Term Memory (CNN-LSTM) networks.</p>
+</div>
+
+<div class="card" style="margin-bottom: 1.75rem;">
+    <div class="card-title">Core Processing Pipeline Workflow</div>
+    <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 0.5rem; text-align: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem;">
+        <div style="flex: 1; min-width: 110px;">
+            <div style="font-size: 1.5rem;">📥</div>
+            <div style="font-size: 0.85rem; font-weight: 600; margin-top: 0.3rem;">1. Sensor Data</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Vibration/Thermal Signals</div>
+        </div>
+        <div style="color: var(--primary); font-weight: 700;">➔</div>
+        <div style="flex: 1; min-width: 110px;">
+            <div style="font-size: 1.5rem;">⚙️</div>
+            <div style="font-size: 0.85rem; font-weight: 600; margin-top: 0.3rem;">2. Preprocessing</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Scaler & 3D Windowing</div>
+        </div>
+        <div style="color: var(--primary); font-weight: 700;">➔</div>
+        <div style="flex: 1; min-width: 110px;">
+            <div style="font-size: 1.5rem;">📐</div>
+            <div style="font-size: 0.85rem; font-weight: 600; margin-top: 0.3rem;">3. 1D CNN</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Local Feature Extraction</div>
+        </div>
+        <div style="color: var(--primary); font-weight: 700;">➔</div>
+        <div style="flex: 1; min-width: 110px;">
+            <div style="font-size: 1.5rem;">⏱️</div>
+            <div style="font-size: 0.85rem; font-weight: 600; margin-top: 0.3rem;">4. LSTM Layer</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Temporal Dependencies</div>
+        </div>
+        <div style="color: var(--primary); font-weight: 700;">➔</div>
+        <div style="flex: 1; min-width: 110px;">
+            <div style="font-size: 1.5rem;">🎯</div>
+            <div style="font-size: 0.85rem; font-weight: 600; margin-top: 0.3rem;">5. Fault Predict</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Softmax Categorical</div>
+        </div>
+        <div style="color: var(--primary); font-weight: 700;">➔</div>
+        <div style="flex: 1; min-width: 110px;">
+            <div style="font-size: 1.5rem;">🚦</div>
+            <div style="font-size: 0.85rem; font-weight: 600; margin-top: 0.3rem;">6. Health Status</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">NORMAL/WARNING/CRITICAL</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Deep Learning Architecture Details -->
+    <div class="card">
+        <div class="card-title">CNN-LSTM Neural Network Architecture</div>
+        <ul style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; padding-left: 1.25rem;">
+            <li><strong style="color: var(--text-main);">1D Convolutional Layers (Conv1D):</strong> Extract spatial harmonics, high-frequency impact peaks, and local shape features from multi-channel sensor windows.</li>
+            <li><strong style="color: var(--text-main);">Batch Normalization & Max Pooling:</strong> Stabilizes gradient updates during backpropagation and reduces feature map spatial dimensionality.</li>
+            <li><strong style="color: var(--text-main);">Long Short-Term Memory (LSTM):</strong> Captures sequence degradation dynamics and long-term temporal dependencies across sliding time steps.</li>
+            <li><strong style="color: var(--text-main);">Dense & Softmax Classifier:</strong> Computes probability vector mapping to discrete bearing/machine fault conditions.</li>
+        </ul>
+    </div>
+
+    <!-- Dataset & RUL Distinction -->
+    <div class="card">
+        <div class="card-title">Primary Dataset & Academic Scope</div>
+        <ul style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; padding-left: 1.25rem;">
+            <li><strong style="color: var(--text-main);">CWRU Bearing Dataset:</strong> Case Western Reserve University Bearing Data Center vibration signals used for baseline fault classification (Normal, Inner Race, Outer Race, Ball Fault).</li>
+            <li><strong style="color: var(--text-main);">Generic CSV Compatibility:</strong> Flexible preprocessing pipeline dynamically detects numeric columns and label fields for custom machine datasets.</li>
+            <li><strong style="color: var(--text-main);">Optional RUL Extension:</strong> Remaining Useful Life (RUL) regression (e.g. NASA C-MAPSS run-to-failure data) is maintained as a separate optional extension module to avoid mixing classification and regression targets.</li>
+            <li><strong style="color: var(--text-main);">Software-Only Prototype:</strong> Operates entirely via historical CSV datasets without requiring physical microcontrollers (Arduino/Raspberry Pi) or IoT hardware.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

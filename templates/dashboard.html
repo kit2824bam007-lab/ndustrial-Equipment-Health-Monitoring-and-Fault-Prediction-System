@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Industrial Health System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>System Overview Dashboard</h1>
+    <p>Real-time equipment condition monitoring, fault status, and model performance metrics.</p>
+</div>
+
+<!-- Alert Banner Container (Populated via JS) -->
+<div id="dashboard-alert-container"></div>
+
+<!-- Top Overview KPI Cards -->
+<div class="grid-4">
+    <div class="card">
+        <div class="card-title">Equipment Health</div>
+        <div class="card-value" id="card-health-status">--</div>
+        <div class="card-sub" id="card-health-sub">Software-derived status</div>
+    </div>
+    
+    <div class="card">
+        <div class="card-title">Predicted Condition</div>
+        <div class="card-value" id="card-predicted-fault" style="font-size: 1.4rem;">--</div>
+        <div class="card-sub" id="card-fault-sub">Latest model output</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Prediction Confidence</div>
+        <div class="card-value" id="card-confidence">--</div>
+        <div class="card-sub">Model softmax probability</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Model Test Accuracy</div>
+        <div class="card-value" id="card-model-accuracy">Model not trained</div>
+        <div class="card-sub">Test set evaluation</div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid-2">
+    <!-- Sensor Signal Trend Graph -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div class="card-title" style="margin-bottom:0;">Sensor Signal Trend</div>
+            <select id="sensor-selector" class="form-select" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.8rem;">
+                <option value="">Select Sensor Signal...</option>
+            </select>
+        </div>
+        <div class="chart-container">
+            <canvas id="sensorTrendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Prediction Class Distribution -->
+    <div class="card">
+        <div class="card-title">Fault Prediction Distribution</div>
+        <div class="chart-container">
+            <canvas id="predictionDistChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

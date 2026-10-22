@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Prediction History - Industrial Health System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Prediction History & Logs</h1>
+    <p>View and filter past equipment condition predictions recorded in SQLite database.</p>
+</div>
+
+<!-- Filters Bar -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: flex-end;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-health">Health Status:</label>
+            <select id="filter-health" class="form-select">
+                <option value="">All Health Statuses</option>
+                <option value="NORMAL">NORMAL</option>
+                <option value="WARNING">WARNING</option>
+                <option value="CRITICAL">CRITICAL</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-class">Fault Class:</label>
+            <input type="text" id="filter-class" class="form-control" placeholder="Search class name...">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-start-date">Start Date:</label>
+            <input type="date" id="filter-start-date" class="form-control">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-end-date">End Date:</label>
+            <input type="date" id="filter-end-date" class="form-control">
+        </div>
+
+        <div>
+            <button class="btn btn-primary" id="btn-apply-filters" style="width: 100%;">
+                🔍 Apply Filters
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- History Log Table -->
+<div class="card">
+    <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>SQLite Prediction Logs</span>
+        <span id="history-total-count" style="font-size: 0.85rem; color: var(--text-muted);">Total: 0 records</span>
+    </div>
+    
+    <div class="table-responsive" style="margin-top: 0.5rem;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>Dataset Name</th>
+                    <th>Predicted Condition</th>
+                    <th>Confidence</th>
+                    <th>Health Status</th>
+                    <th>Model Version</th>
+                </tr>
+            </thead>
+            <tbody id="history-tbody">
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted);">Loading prediction history...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+{% endblock %}

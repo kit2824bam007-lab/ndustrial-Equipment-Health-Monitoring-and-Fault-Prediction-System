@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}Dataset Upload & Preparation - Industrial Health System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Upload & Configure Machine Dataset</h1>
+    <p>Upload a real company machine condition CSV dataset or use the sample demo dataset.</p>
+</div>
+
+<!-- Upload & Active Dataset Section -->
+<div class="grid-2">
+    <!-- CSV Upload Card -->
+    <div class="card">
+        <div class="card-title">Upload Company Machine CSV</div>
+        <div class="upload-zone" id="upload-zone">
+            <div class="upload-icon">📁</div>
+            <h3>Drag & Drop Company CSV File Here</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">or click to browse from your computer</p>
+            <input type="file" id="file-input" accept=".csv" style="display: none;">
+            <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Browse Company CSV</button>
+        </div>
+        <div id="upload-status" style="margin-top: 1rem; font-size: 0.875rem;"></div>
+    </div>
+
+    <!-- Active Dataset Summary -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <div class="card-title" style="margin-bottom:0;">Current Active Dataset</div>
+            <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="loadCompanySampleDataset()">Use Company Demo Sample</button>
+        </div>
+        
+        <div id="dataset-info-box">
+            <table class="table" style="margin-top: 0.5rem;">
+                <tbody>
+                    <tr><td><strong>Filename:</strong></td><td id="ds-filename">Loading...</td></tr>
+                    <tr><td><strong>File Size:</strong></td><td id="ds-filesize">--</td></tr>
+                    <tr><td><strong>Total Rows:</strong></td><td id="ds-rows">--</td></tr>
+                    <tr><td><strong>Total Columns:</strong></td><td id="ds-cols">--</td></tr>
+                    <tr><td><strong>Duplicate Rows:</strong></td><td id="ds-duplicates">--</td></tr>
+                    <tr><td><strong>Missing Values:</strong></td><td id="ds-missing">--</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset Column Mapping & Sequence Configuration -->
+<div class="card" style="margin-bottom: 1.75rem;">
+    <div class="card-title">Dataset Column Mapping & Windowing Configuration</div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 1rem;">
+        <!-- Timestamp Column Dropdown -->
+        <div class="form-group">
+            <label class="form-label" for="timestamp-col-select">Timestamp Column (Optional):</label>
+            <select id="timestamp-col-select" class="form-select">
+                <option value="">-- None / Index Order --</option>
+            </select>
+            <small style="color: var(--text-muted); display: block; margin-top: 0.3rem;">Chronological sorting column</small>
+        </div>
+
+        <!-- Machine ID Column Dropdown -->
+        <div class="form-group">
+            <label class="form-label" for="machine-id-col-select">Machine / Unit ID (Optional):</label>
+            <select id="machine-id-col-select" class="form-select">
+                <option value="">-- Single Equipment Unit --</option>
+            </select>
+            <small style="color: var(--text-muted); display: block; margin-top: 0.3rem;">Prevents sequences crossing machine boundaries</small>
+        </div>
+
+        <!-- Target Fault Column Dropdown -->
+        <div class="form-group">
+            <label class="form-label" for="target-col-select">Target / Fault Label Column:</label>
+            <select id="target-col-select" class="form-select" required>
+                <option value="">-- Select Target Column --</option>
+            </select>
+            <small style="color: var(--text-muted); display: block; margin-top: 0.3rem;">Supervised learning class target</small>
+        </div>
+    </div>
+
+    <!-- Sensor Input Features Selection -->
+    <div class="form-group" style="margin-top: 1rem;">
+        <label class="form-label">Select Sensor Input Feature Columns:</label>
+        <div id="sensor-checkbox-group" style="background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 0.375rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem; max-height: 160px; overflow-y: auto;">
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Select columns above...</p>
+        </div>
+        <small style="color: var(--text-muted); display: block; margin-top: 0.3rem;">Numeric signals (temperature, vibration, current, RPM, pressure, load, etc.)</small>
+    </div>
+
+    <!-- Sequence Windowing & Train/Val/Test Split Inputs -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div class="form-group">
+            <label class="form-label" for="seq-len-input">Sequence Length:</label>
+            <input type="number" id="seq-len-input" class="form-control" value="30" min="5" max="500">
+            <small style="color: var(--text-muted); display: block; margin-top: 0.2rem;">Time steps per 3D window (default: 30)</small>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="val-size-input">Validation Split Ratio:</label>
+            <input type="number" id="val-size-input" class="form-control" value="0.15" step="0.05" min="0.05" max="0.40">
+            <small style="color: var(--text-muted); display: block; margin-top: 0.2rem;">Default: 0.15 (15%)</small>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="test-size-input">Testing Split Ratio:</label>
+            <input type="number" id="test-size-input" class="form-control" value="0.15" step="0.05" min="0.05" max="0.40">
+            <small style="color: var(--text-muted); display: block; margin-top: 0.2rem;">Default: 0.15 (15%)</small>
+        </div>
+
+        <div style="display: flex; align-items: flex-end;">
+            <button class="btn btn-primary" id="btn-prepare-dataset" style="width: 100%;">
+                ⚙️ PREPARE DATASET
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset Preparation Summary Box (Rendered after PREPARE DATASET click) -->
+<div id="prep-summary-container" style="display: none; margin-bottom: 1.75rem;">
+    <div class="card" style="border: 1px solid var(--primary); background: rgba(59, 130, 246, 0.05);">
+        <div class="card-title" style="color: var(--primary);">Dataset Preparation Summary</div>
+        
+        <div class="grid-4" style="margin-top: 0.75rem; margin-bottom: 1rem;">
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">TOTAL 3D SEQUENCES</div>
+                <div style="font-size: 1.6rem; font-weight: 700; color: var(--text-main);" id="prep-seq-count">0</div>
+            </div>
+
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">TRAINING SAMPLES</div>
+                <div style="font-size: 1.6rem; font-weight: 700; color: #10b981;" id="prep-train-count">0</div>
+            </div>
+
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">VALIDATION SAMPLES</div>
+                <div style="font-size: 1.6rem; font-weight: 700; color: #f59e0b;" id="prep-val-count">0</div>
+            </div>
+
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 0.5rem; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">TESTING SAMPLES</div>
+                <div style="font-size: 1.6rem; font-weight: 700; color: #3b82f6;" id="prep-test-count">0</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div>
+                <strong>Detected Fault Classes (<span id="prep-class-num">0</span>):</strong>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem;" id="prep-class-names">--</p>
+            </div>
+
+            <div>
+                <strong>Class Distribution Counts:</strong>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem;" id="prep-class-dist">--</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.25rem; text-align: right;">
+            <a href="{{ url_for('training_page') }}" class="btn btn-primary" id="btn-proceed-train">Proceed to Model Training →</a>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset First 10 Rows Preview -->
+<div class="card">
+    <div class="card-title">Dataset First 10 Rows Preview</div>
+    <div class="table-responsive" style="margin-top: 0.5rem;">
+        <table class="table" id="preview-table">
+            <thead>
+                <tr id="preview-thead-tr"><th>Select a dataset to view preview</th></tr>
+            </thead>
+            <tbody id="preview-tbody">
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dataset.js') }}"></script>
+{% endblock %}

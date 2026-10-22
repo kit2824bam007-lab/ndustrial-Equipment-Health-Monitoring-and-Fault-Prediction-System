@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Machine Health Prediction - Industrial Health System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Predict Machine Health Condition</h1>
+    <p>Perform inference using the trained CNN-LSTM model on unseen company machine condition data.</p>
+</div>
+
+<!-- Prediction Input Card -->
+<div class="card" style="margin-bottom: 1.75rem;">
+    <div class="card-title">Upload Unseen Company Dataset for Prediction</div>
+    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-top: 0.5rem;">
+        <div style="flex: 1; min-width: 280px;">
+            <input type="file" id="predict-file-input" accept=".csv" class="form-control">
+        </div>
+        <button class="btn btn-primary" id="btn-run-predict">
+            ⚡ Predict Machine Health
+        </button>
+    </div>
+    <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">
+        Note: Leave file input blank to analyze the currently selected active dataset (company_machine_data.csv).
+    </small>
+</div>
+
+<!-- Prediction Results Container -->
+<div id="prediction-result-container" style="display: none;">
+    <!-- Alert Banner -->
+    <div id="pred-alert-box"></div>
+
+    <!-- Summary KPI Cards -->
+    <div class="grid-4" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="card">
+            <div class="card-title">Machine ID & Time</div>
+            <div class="card-value" id="res-machine-id" style="font-size: 1.5rem; color: var(--primary);">--</div>
+            <div class="card-sub" id="res-timestamp">--</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Predicted Fault Condition</div>
+            <div class="card-value" id="res-predicted-class" style="font-size: 1.4rem;">--</div>
+            <div class="card-sub" id="res-dataset-name">--</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Prediction Confidence</div>
+            <div class="card-value" id="res-confidence">--%</div>
+            <div class="card-sub">Model softmax probability</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Calculated Health Score</div>
+            <div class="card-value" id="res-health-score" style="font-size: 1.75rem;">--/100</div>
+            <div class="card-sub" id="res-health-status">--</div>
+        </div>
+    </div>
+
+    <!-- Probability Distribution & Sensor Trend -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">Class Confidence Probabilities</div>
+            <div class="chart-container">
+                <canvas id="predProbChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Analyzed Sensor Signals Trend</div>
+            <div class="chart-container">
+                <canvas id="predSensorChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/prediction.js') }}"></script>
+{% endblock %}
